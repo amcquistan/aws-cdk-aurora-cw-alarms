@@ -10,3 +10,4 @@ cdk.context.json
 *.env
 
 blogpost.md
+*.png

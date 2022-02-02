@@ -61,30 +61,36 @@ export class AwsCdkAuroraCwAlarmsStack extends Stack {
     });
     const dbWriterCpuMetric = dbCluster.metricCPUUtilization({
       period: Duration.minutes(2),
-      dimensionsMap: { Role: 'WRITER' }
+      dimensionsMap: {
+        DBClusterIdentifier: dbCluster.clusterIdentifier,
+        Role: 'WRITER'
+      }
     });
     const dbReaderCpuMetric = dbCluster.metricCPUUtilization({
       period: Duration.minutes(2),
-      dimensionsMap: { Role: 'READER' }
+      dimensionsMap: {
+        DBClusterIdentifier: dbCluster.clusterIdentifier,
+        Role: 'READER'
+      }
     });
 
     // CloudWatch alarms for CPU Utilization metrics set to
-    // alarm state when CPU os over 30 percent at
+    // alarm state when CPU os over 25 percent at
     // DB Cluster, Writer and Reader instances
-    const dbCpuAlarm = dbCpuMetric.createAlarm(this, 'DbCpuAlarm', {
+    const dbCpuAlarm = dbCpuMetric.createAlarm(this, 'DbCpu25Alarm', {
       evaluationPeriods: 1,
-      alarmDescription: "Cluster CPU Over 30 Percent",
-      threshold: 30
+      alarmDescription: "Cluster CPU Over 25 Percent",
+      threshold: 25
     });
-    const dbWriterCpuAlarm = dbWriterCpuMetric.createAlarm(this, 'DbWriterCpuAlarm', {
+    const dbWriterCpuAlarm = dbWriterCpuMetric.createAlarm(this, 'DbWriterCpu25Alarm', {
       evaluationPeriods: 1,
-      alarmDescription: "Writer CPU Over 30 Percent",
-      threshold: 30
+      alarmDescription: "Writer CPU Over 25 Percent",
+      threshold: 25
     });
-    const dbReaderCpuAlarm = dbReaderCpuMetric.createAlarm(this, 'DbReaderCpuAlarm', {
+    const dbReaderCpuAlarm = dbReaderCpuMetric.createAlarm(this, 'DbReaderCpu25Alarm', {
       evaluationPeriods: 1,
-      alarmDescription: "Reader CPU Over 30 Percent",
-      threshold: 30
+      alarmDescription: "Reader CPU Over 25 Percent",
+      threshold: 25
     });
 
     // CloudFormation stack outputs for easy lookup
@@ -109,10 +115,10 @@ export class AwsCdkAuroraCwAlarmsStack extends Stack {
     });
 
     new CfnOutput(this, 'DbWriterEndpoint', {
-      value: dbCluster.clusterEndpoint.socketAddress
+      value: dbCluster.clusterEndpoint.hostname
     });
     new CfnOutput(this, 'DbReaderEndpoint', {
-      value: dbCluster.clusterReadEndpoint.socketAddress
+      value: dbCluster.clusterReadEndpoint.hostname
     });
   }
 }
