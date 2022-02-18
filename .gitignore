@@ -9,5 +9,5 @@ cdk.out
 cdk.context.json
 *.env
 
-blogpost.md
+blogpost*.md
 *.png
