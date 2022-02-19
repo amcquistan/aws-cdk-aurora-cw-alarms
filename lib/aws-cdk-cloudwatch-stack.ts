@@ -24,7 +24,8 @@ export class AwsCdkCloudWatchStack extends Stack {
       const filterMetric = dbLogGroup.addMetricFilter('SlowQueryMetricFilter', {
         filterPattern: logs.FilterPattern.anyTerm('duration'),
         metricName: 'SlowQuery',
-        metricNamespace: 'AuroraPostgreSQL'
+        metricNamespace: 'AuroraPostgreSQL',
+        defaultValue: 0
       });
 
       const metric = filterMetric.metric()
